@@ -52,22 +52,32 @@ def register(request):
         return render(request, 'register.html')
     
 def myprofile_add(request,username):
+    if MyProfile.objects.filter(name = username):
+            return redirect('myprofile_edit',username)
     if request.method == 'POST':
         user_id = request.POST['user_id']
         nickname = request.POST['nickname']
         profile = request.POST['profile']
         birthday = request.POST['birthday']
-        
+
         new_profile = MyProfile.objects.create(name = username, user_id = user_id, nickname = nickname, profile= profile, birthday = birthday)
         new_profile.save()
 
         return redirect('mypage',username)
     else:
         form = ProfileForm()
-    return render(request,'profile/myprofile_add.html',{'form':form, 'username':username})
+        return render(request,'profile/myprofile_add.html',{'form':form, 'username':username})
 
-def myprofile_edit(request):
-    return render(request,'profile/myprofile_edit.html')
+def myprofile_edit(request,username):
+    profile = MyProfile.objects.get(name = username)
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance = profile)
+        if form.is_valid():
+            form.save()
+            return redirect('myprofile',username)
+    else:
+        form = ProfileForm(instance = profile)
+    return render(request,'profile/myprofile_edit.html',{'username':username,'form':form})
 
 def myprofile(request):
     return render(request,'profile/myprofile.html')
