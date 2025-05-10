@@ -17,7 +17,7 @@ def login(request):
 
         if user is not None:
             auth.login(request,user)
-            return redirect('home')
+            return redirect('mypage',username=username)
         else:
             messages.info(request,'ログイン情報が間違っています')
             return redirect('login')
@@ -49,6 +49,9 @@ def register(request):
             return redirect('register')
     else:
         return render(request, 'register.html')
+    
+def mypage(request,username):
+    return render(request,'mypage.html',{'username':username})
 
 def home(request):
     return render(request, 'home.html')
