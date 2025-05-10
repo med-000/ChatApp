@@ -9,3 +9,11 @@ class Message(models.Model):
     date = models.DateTimeField(default=datetime.now, blank=True)
     user = models.CharField(max_length=1000000)
     room = models.CharField(max_length=1000000)
+
+class MyProfile(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.CharField(max_length=100)
+    user_id  = models.CharField(max_length=100)
+    nickname = models.CharField(max_length=100)
+    profile = models.CharField(max_length=100,null = True,blank = True)
+    birthday = models.CharField(max_length=100,null = True,blank = True)
