@@ -53,7 +53,7 @@ def register(request):
     
 def myprofile_add(request,username):
     if MyProfile.objects.filter(name = username):
-            return redirect('myprofile_edit',username)
+            return redirect('mypage',username)
     if request.method == 'POST':
         user_id = request.POST['user_id']
         nickname = request.POST['nickname']
@@ -86,11 +86,13 @@ def mypage(request,username):
     user = User.objects.all()
     return render(request,'mypage.html',{'username':username,'user':user})
 
-def home(request):
-    return render(request, 'home.html')
+def personal_chat_add(request,username):
+    return render(request,'chat/personal_chat_add.html',{'username':username})
 
-def room(request, room):
-    username = request.GET.get('username')
+def home(request,username):
+    return render(request, 'home.html',{'username':username})
+
+def room(request, room, username):
     room_details = Room.objects.get(name=room)
     return render(request, 'room.html', {
         'username': username,
