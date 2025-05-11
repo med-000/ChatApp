@@ -1,0 +1,22 @@
+<html>
+<body>    
+<div>    
+    <form id="post-form" method="POST">
+        {% csrf_token %}
+        
+        <label>友達になりたい人のメールアドレス</label>
+        <input type="email" name="email" id="email" style="width: 200px;" required />
+
+        {% if messages %}
+            <div>
+                {% for message in messages %}
+                    <small style="color: red;">{{ message }}</small><br>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <input type="submit" value="Enter Room">
+    </form>
+</div>
+</body>
+</html>

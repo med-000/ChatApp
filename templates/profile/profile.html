@@ -1,0 +1,14 @@
+<div>
+<h1>
+    {{name}}<br>
+    {{email}}<br>
+    {{user_id}}<br>
+    {{nickname}}<br>
+    {{yourprofile}}<br>
+    {{birthday}}<br>
+    {{id}}<br>
+</h1>
+<form id="post-form" method="POST" action="personal_chat_add_home">
+        {% csrf_token %}
+        <input type="submit" value="Enter Room">
+</form>

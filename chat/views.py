@@ -86,8 +86,48 @@ def mypage(request,username):
     user = User.objects.all()
     return render(request,'mypage.html',{'username':username,'user':user})
 
-def personal_chat_add(request,username):
-    return render(request,'chat/personal_chat_add.html',{'username':username})
+def personal_chat_add(request, username):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        profile = MyProfile.objects.get(name=username)
+        nickname = profile.nickname
+
+        if MyProfile.objects.filter(email=email).exists():
+            return redirect('profile', username=username, nickname=nickname)
+
+        else:
+            messages.info(request, 'メールアドレスが存在しません')
+            return render(request, 'chat/personal_chat_add.html', {'username': username})
+
+    return render(request, 'chat/personal_chat_add.html', {'username': username})
+
+def personal_chat_add_home(request,username,nickname):
+    if request.method == "POST":
+        yourprofile = MyProfile.objects.get(nickname = nickname)
+        myprofile = MyProfile.objects.get(name = username)
+        room = yourprofile.email + myprofile.email
+
+        if Room.objects.filter(name=room).exists():
+            return redirect('/home' + '/' + username +'/' + room)
+        else:
+            new_room = Room.objects.create(name=room)
+            new_room.save()
+            return redirect('/home' + '/' + username +'/' + room)
+    
+    
+    else:
+        return render(request,'profile/profile.html',{'username':username, 'nickname':nickname})
+
+def profile(request,username,nickname):
+    profile = MyProfile.objects.get(nickname= nickname)
+    nickname = profile.nickname
+    email = profile.email
+    user_id = profile.user_id
+    yourprofile = profile.profile
+    birthday = profile.birthday
+    id = profile.id
+
+    return render(request,'profile/profile.html',{'nickname':nickname,'username':username,'email':email ,'user_id':user_id,'yourprofile':yourprofile,'birthday':birthday,'id':id})
 
 def home(request,username):
     return render(request, 'home.html',{'username':username})
@@ -100,16 +140,15 @@ def room(request, room, username):
         'room_details': room_details
     })
 
-def checkview(request):
+def checkview(request,username):
     room = request.POST['room_name']
-    username = request.POST['username']
 
     if Room.objects.filter(name=room).exists():
-        return redirect('/'+room+'/?username='+username)
+        return redirect('/home' + '/' + username +'/' + room)
     else:
         new_room = Room.objects.create(name=room)
         new_room.save()
-        return redirect('/'+room+'/?username='+username)
+        return redirect('/home' + '/' + username +'/' + room)
 
 def send(request):
     message = request.POST['message']
