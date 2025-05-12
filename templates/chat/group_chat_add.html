@@ -1,0 +1,11 @@
+<form method = "POST">
+    {% csrf_token %}
+    {% for everyonefile in everyonefiles %}
+  <label>
+    <input type="checkbox" name="choices" value="{{everyonefile.email}}">
+    {{everyonefile.nickname}}
+    <p class="description">{{everyonefile.name}}</p>
+  </label>
+  {% endfor %}<br>
+  <button type="submit">Submit</button>
+</form>

@@ -1,0 +1,14 @@
+<form id="post-form" method="POST" action="">
+    {% csrf_token %}
+    <h2>選択されたオプション:</h2>
+    <ul>
+        {% if nicknames %}
+            {% for item in nicknames %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        {% else %}
+            <li>何も選択されていません。</li>
+        {% endif %}
+    </ul>
+    <input type="submit" value="enterroom">
+</form>

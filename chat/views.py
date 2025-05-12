@@ -109,7 +109,7 @@ def personal_chat_add_home(request,username,nickname):
     if request.method == "POST":
         yourprofile = MyProfile.objects.get(nickname = nickname)
         myprofile = MyProfile.objects.get(name = username)
-        room = yourprofile.email + myprofile.email
+        room = str(yourprofile.id) + '-' + str(myprofile.id)
 
 
         if Room.objects.filter(name=room).exists():
@@ -117,11 +117,13 @@ def personal_chat_add_home(request,username,nickname):
         else:
             new_room = Room.objects.create(name=room,nickname = nickname)
             new_room.save()
-            id_li = []
+            my_id_li = myprofile.room_ids or []
+            your_id_li = yourprofile.room_ids or []
             id = new_room.id
-            id_li.append(id) 
-            yourprofile.room_ids = id_li
-            myprofile.room_ids = id_li
+            my_id_li.append(id)
+            your_id_li.append(id) 
+            yourprofile.room_ids = your_id_li
+            myprofile.room_ids = my_id_li
             yourprofile.save()
             myprofile.save()
             return redirect('/home' + '/' + username +'/' + room +'/' + nickname)
@@ -141,17 +143,84 @@ def profile(request,username,nickname):
 
     return render(request,'profile/profile.html',{'nickname':nickname,'username':username,'email':email ,'user_id':user_id,'yourprofile':yourprofile,'birthday':birthday,'id':id})
 
+def group_chat_add(request,username):
+    myprofile = MyProfile.objects.get(name = username)
+    room_ids = myprofile.room_ids
+    everyonefiles = []
+    for profile in MyProfile.objects.all():
+        if profile != myprofile: 
+            if profile.room_ids:
+                if any(room_id in profile.room_ids for room_id in room_ids):
+                    everyonefiles.append(profile)
+                    
+    if request.method == 'POST':
+        selected = request.POST.getlist('choices')
+        request.session['selected'] = selected 
+        return redirect('confirm', username=username)
+    
+    return render(request,'chat/group_chat_add.html',{'username':username,'everyonefiles':everyonefiles})
+
+def confirm(request, username):
+    if request.method == 'POST':
+        selected = request.session.get('selected', [])
+        return redirect('groupprofile', username=username)
+    
+    selected = request.session.get('selected', [])
+    nicknames = []
+    for select in selected:
+        profile = MyProfile.objects.get(email = select)
+        nickname = profile.nickname
+        nicknames.append(nickname)
+    return render(request, 'confirm.html', {
+        'username': username,
+        'nicknames': nicknames
+    })
+
+def groupprofile(request,username):
+    if request.method == 'POST':
+        nickname = request.POST['groupname']
+        selected = request.session.get('selected',[])
+        myprofile = MyProfile.objects.get(name = username)
+        id = myprofile.id
+        room = str(id)
+        for select in selected:
+            otherprofile = MyProfile.objects.get(email = select)
+            everyoneid = str(otherprofile.id)
+            room += "-" + everyoneid
+        
+        if Room.objects.filter(name=room).exists():
+            return redirect('/home' + '/' + username +'/' + room +'/' + nickname)
+
+        else:
+            new_room = Room.objects.create(name = room,nickname = nickname)
+            new_room.save()
+            id = new_room.id
+            myroom_ids = myprofile.room_ids
+            myroom_ids.append(id)
+            myprofile.room_ids = myroom_ids
+            myprofile.save()
+            for select in selected:
+                otherprofile = MyProfile.objects.get(email = select)
+                otherroom_ids = otherprofile.room_ids
+                otherroom_ids.append(id)
+                otherprofile.room_ids = otherroom_ids
+                otherprofile.save()
+            return redirect('/home' + '/' + username +'/' + room +'/' + nickname)
+
+
+    return render(request,'profile/groupprofile.html',{'username':username}) 
+
 def home(request,username):
     myprofile = MyProfile.objects.get(name = username)
     room_ids = myprofile.room_ids
     rooms = []
     roomsname = []
-    for room_id in room_ids:
-        room = Room.objects.get(id = room_id)
-        rooms.append(room)
-        roomname = room.name
-        roomsname.append(roomname)
-    
+    for room_id in room_ids or []:
+        room = Room.objects.filter(id = room_id).first()
+        if room:
+            rooms.append(room)
+            roomsname.append(room.name)
+
     return render(request, 'home.html',{'username':username,'roomsname':roomsname,'rooms':rooms})
 
 def room(request, room, username,nickname):

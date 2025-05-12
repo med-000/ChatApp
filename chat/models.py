@@ -18,4 +18,4 @@ class MyProfile(models.Model):
     nickname = models.CharField(max_length=100)
     profile = models.CharField(max_length=100,null = True,blank = True)
     birthday = models.CharField(max_length=100,null = True,blank = True)
-    room_ids = models.JSONField(null = True,blank = True)   
+    room_ids = models.JSONField(default=list,null = True,blank = True)   

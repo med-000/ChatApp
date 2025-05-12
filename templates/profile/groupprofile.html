@@ -1,0 +1,13 @@
+<html>
+<body>    
+<div>    
+    <form id="post-form" method="POST">
+        {% csrf_token %}
+        
+        <label>グループ名</label>
+        <input type="text" name="groupname" style="width: 200px;" required />
+        <input type="submit" value="Enter Room">
+    </form>
+</div>
+</body>
+</html>
