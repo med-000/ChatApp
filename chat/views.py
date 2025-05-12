@@ -142,7 +142,17 @@ def profile(request,username,nickname):
     return render(request,'profile/profile.html',{'nickname':nickname,'username':username,'email':email ,'user_id':user_id,'yourprofile':yourprofile,'birthday':birthday,'id':id})
 
 def home(request,username):
-    return render(request, 'home.html',{'username':username})
+    myprofile = MyProfile.objects.get(name = username)
+    room_ids = myprofile.room_ids
+    rooms = []
+    roomsname = []
+    for room_id in room_ids:
+        room = Room.objects.get(id = room_id)
+        rooms.append(room)
+        roomname = room.name
+        roomsname.append(roomname)
+    
+    return render(request, 'home.html',{'username':username,'roomsname':roomsname,'rooms':rooms})
 
 def room(request, room, username,nickname):
     room_details = Room.objects.get(name=room)
