@@ -55,6 +55,7 @@ def myprofile_add(request,username):
     if MyProfile.objects.filter(name = username):
             return redirect('mypage',username)
     if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES)
         user_id = request.POST['user_id']
         nickname = request.POST['nickname']
         profile = request.POST['profile']
@@ -73,10 +74,10 @@ def myprofile_add(request,username):
 def myprofile_edit(request,username):
     profile = MyProfile.objects.get(name = username)
     if request.method == "POST":
-        form = ProfileForm(request.POST, instance = profile)
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('myprofile',username)
+            return redirect('mypage',username)
     else:
         form = ProfileForm(instance = profile)
     return render(request,'profile/myprofile_edit.html',{'username':username,'form':form})
@@ -84,9 +85,18 @@ def myprofile_edit(request,username):
 def myprofile(request):
     return render(request,'profile/myprofile.html')
     
-def mypage(request,username):
+def mypage(request, username):
     user = User.objects.all()
-    return render(request,'mypage.html',{'username':username,'user':user})
+    try:
+        profile = MyProfile.objects.get(name=username)
+    except MyProfile.DoesNotExist:
+        profile = None
+
+    return render(request, 'mypage.html', {
+        'username': username,
+        'user': user,
+        'profile': profile,
+    })
 
 def personal_chat_add(request, username):
     if request.method == 'POST':
@@ -113,9 +123,9 @@ def personal_chat_add_home(request,username,nickname):
 
 
         if Room.objects.filter(name=room).exists():
-            return redirect('/home' + '/' + username +'/' + room +'/' + nickname)
+            return redirect('/home' + '/' + username +'/' + room +'/' + room)
         else:
-            new_room = Room.objects.create(name=room,nickname = nickname)
+            new_room = Room.objects.create(name=room,nickname = room)
             new_room.save()
             my_id_li = myprofile.room_ids or []
             your_id_li = yourprofile.room_ids or []
@@ -126,7 +136,7 @@ def personal_chat_add_home(request,username,nickname):
             myprofile.room_ids = my_id_li
             yourprofile.save()
             myprofile.save()
-            return redirect('/home' + '/' + username +'/' + room +'/' + nickname)
+            return redirect('/home' + '/' + username +'/' + room +'/' + room)
     
     
     else:
@@ -215,21 +225,32 @@ def home(request,username):
     room_ids = myprofile.room_ids
     rooms = []
     roomsname = []
+    yourprofile = None
     for room_id in room_ids or []:
         room = Room.objects.filter(id = room_id).first()
         if room:
             rooms.append(room)
             roomsname.append(room.name)
+            room_li = room.name.split("-")
+            if room.name == room.nickname:
+                if int(room_li[0]) == myprofile.id:
+                    confirm_your_id = room_li[1]
+                    yourprofile = MyProfile.objects.get(id = confirm_your_id)
+                elif int(room_li[1]) == myprofile.id:
+                    confirm_your_id = room_li[0]
+                    yourprofile = MyProfile.objects.get(id = confirm_your_id)
+                else:
+                    pass
 
-    return render(request, 'home.html',{'username':username,'roomsname':roomsname,'rooms':rooms})
+    return render(request, 'home.html',{'username':username,'roomsname':roomsname,'rooms':rooms,'myprofile':myprofile,'yourprofile':yourprofile})
 
-def room(request, room, username,nickname):
+def room(request, room, username, nickname):
     room_details = Room.objects.get(name=room)
     return render(request, 'room.html', {
         'username': username,
         'room': room,
         'room_details': room_details,
-        'nickname':nickname
+        'nickname':nickname,
     })
 
 def checkview(request,username):
