@@ -59,8 +59,10 @@ def myprofile_add(request,username):
         nickname = request.POST['nickname']
         profile = request.POST['profile']
         birthday = request.POST['birthday']
+        user = User.objects.get(username = username)
+        email = user.email
 
-        new_profile = MyProfile.objects.create(name = username, user_id = user_id, nickname = nickname, profile= profile, birthday = birthday)
+        new_profile = MyProfile.objects.create(name = username, user_id = user_id, nickname = nickname, profile= profile, birthday = birthday,email = email)
         new_profile.save()
 
         return redirect('mypage',username)
@@ -93,7 +95,9 @@ def personal_chat_add(request, username):
         nickname = profile.nickname
 
         if MyProfile.objects.filter(email=email).exists():
-            return redirect('profile', username=username, nickname=nickname)
+            youruser = MyProfile.objects.get(email = email)
+            yournickname = youruser.nickname
+            return redirect('profile', username=username, nickname=yournickname)
 
         else:
             messages.info(request, 'メールアドレスが存在しません')
@@ -107,12 +111,20 @@ def personal_chat_add_home(request,username,nickname):
         myprofile = MyProfile.objects.get(name = username)
         room = yourprofile.email + myprofile.email
 
+
         if Room.objects.filter(name=room).exists():
-            return redirect('/home' + '/' + username +'/' + room)
+            return redirect('/home' + '/' + username +'/' + room +'/' + nickname)
         else:
-            new_room = Room.objects.create(name=room)
+            new_room = Room.objects.create(name=room,nickname = nickname)
             new_room.save()
-            return redirect('/home' + '/' + username +'/' + room)
+            id_li = []
+            id = new_room.id
+            id_li.append(id) 
+            yourprofile.room_ids = id_li
+            myprofile.room_ids = id_li
+            yourprofile.save()
+            myprofile.save()
+            return redirect('/home' + '/' + username +'/' + room +'/' + nickname)
     
     
     else:
@@ -132,12 +144,13 @@ def profile(request,username,nickname):
 def home(request,username):
     return render(request, 'home.html',{'username':username})
 
-def room(request, room, username):
+def room(request, room, username,nickname):
     room_details = Room.objects.get(name=room)
     return render(request, 'room.html', {
         'username': username,
         'room': room,
-        'room_details': room_details
+        'room_details': room_details,
+        'nickname':nickname
     })
 
 def checkview(request,username):

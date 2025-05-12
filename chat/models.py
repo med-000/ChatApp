@@ -4,6 +4,7 @@ from datetime import datetime
 # Create your models here.
 class Room(models.Model):
     name = models.CharField(max_length=1000)
+    nickname = models.CharField(max_length=1000,null = True,blank = True)
 class Message(models.Model):
     value = models.CharField(max_length=1000000)
     date = models.DateTimeField(default=datetime.now, blank=True)
@@ -17,3 +18,4 @@ class MyProfile(models.Model):
     nickname = models.CharField(max_length=100)
     profile = models.CharField(max_length=100,null = True,blank = True)
     birthday = models.CharField(max_length=100,null = True,blank = True)
+    room_ids = models.JSONField(null = True,blank = True)   
