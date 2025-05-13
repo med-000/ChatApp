@@ -1,14 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>選択内容確認</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #dcefff, #a3c4dc);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 40px;
+            color: #2c3e50;
+        }
+
+        form {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            background: #e9f3fa;
+            margin: 10px 0;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease;
+        }
+
+        li:hover {
+            transform: translateX(5px);
+            background-color: #d6ebf8;
+        }
+
+        input[type="submit"] {
+            background: #2980b9;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            display: block;
+            margin: 30px auto 0 auto;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background: #3498db;
+        }
+    </style>
+</head>
+<body>
+
 <form id="post-form" method="POST" action="">
     {% csrf_token %}
-    <h2>選択されたオプション:</h2>
+    <h2>選択されたオプション 🔷</h2>
     <ul>
         {% if nicknames %}
             {% for item in nicknames %}
                 <li>{{ item }}</li>
+                <input type="hidden" name="selected_nicknames" value="{{ item }}">
             {% endfor %}
         {% else %}
             <li>何も選択されていません。</li>
         {% endif %}
     </ul>
-    <input type="submit" value="enterroom">
+    <input type="submit" value="確認完了">
 </form>
+
+</body>
+</html>

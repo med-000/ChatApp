@@ -1,120 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body {
-  margin: 0 auto;
-  max-width: 800px;
-  padding: 0 20px;
-}
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link 
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+    rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background-color: #f9f9f9;
+      font-family: Arial, sans-serif;
+    }
 
-.container {
-  border: 2px solid #dedede;
-  background-color: #f1f1f1;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 10px 0;
-}
+    .main-container {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-.darker {
-  border-color: #ccc;
-  background-color: #ddd;
-}
+    .sidebar {
+      width: 200px;
+      padding: 10px;
+    }
 
-.container::after {
-  content: "";
-  clear: both;
-  display: table;
-}
+    .sidebar a {
+      display: block;
+      margin-bottom: 15px;
+      color: #333;
+      font-weight: bold;
+      text-decoration: none;
+    }
 
-.container img {
-  float: left;
-  max-width: 60px;
-  width: 100%;
-  margin-right: 20px;
-  border-radius: 50%;
-}
+    .chat-content {
+      flex-grow: 1;
+      padding: 10px 20px;
+    }
 
-.container img.right {
-  float: right;
-  margin-left: 20px;
-  margin-right:0;
-}
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.time-right {
-  float: right;
-  color: #aaa;
-}
+    .action-buttons a {
+      margin-left: 10px;
+    }
 
-.time-left {
-  float: left;
-  color: #999;
-}
-</style>
+    .chat-room-box {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      transition: background-color 0.2s ease;
+    }
+
+    .chat-room-box:hover {
+      background-color: #f1f1f1;
+    }
+
+    .chat-room-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .chat-room-box img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+
+    .chat-room-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .default-icon {
+      width: 48px;
+      height: 48px;
+      background-color: #bbb;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      margin-right: 15px;
+      font-size: 1.5rem;
+    }
+  </style>
 </head>
 <body>
 
-<div align="center">
-    <h2>Django Chat</h2>
-</div>
-
-
-<div class="container">
-    <style>
-    input[type=text], select {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    }
-
-    input[type=submit] {
-    width: 100%;
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    }
-
-    input[type=submit]:hover {
-    background-color: #45a049;
-    }
-
-    div {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    padding: 20px;
-    }
-    </style>
-
-</div>
-
-{% for room in rooms %}
-<div class="col-md-6 col-lg-3" data-aos="zoom-out" data-aos-delay="100">
-  <div class="icon-box">
-    <div class="icon"><i class="bi bi-easel"></i></div>
-    <h4 class="title"><a href="{{room.name}}/{{room.nickname}}">{{yourprofile.nickname}}</a></h4>
+<div class="main-container">
+  <!-- 左のメニュー -->
+  <div class="sidebar">
+    <a href="{% url 'mypage' username %}">マイページ</a>
+    <a href="#">通知</a>
+    <a href="#">設定</a>
   </div>
-</div><br><!--End Icon Box -->
-{% endfor %}<br>
 
-<div class="mt-3 text-center">
-  <a href="{% url 'mypage' username%}">マイページ</a>
-</div><br>
-<div class="mt-3 text-center">
-  <a href="{% url 'personal_chat_add' username%}">個人チャットの追加</a>
-</div><br>
-<div class="mt-3 text-center">
-  <a href="{% url 'group_chat_add' username%}">グループチャットの追加</a>
+  <!-- 中央のチャット一覧 -->
+  <div class="chat-content">
+    <div class="chat-header">
+      <h2>チャット一覧</h2>
+      <div class="action-buttons">
+        <a href="{% url 'personal_chat_add' username %}" class="btn btn-outline-primary btn-sm">個人チャット追加</a>
+        <a href="{% url 'group_chat_add' username %}" class="btn btn-outline-success btn-sm">グループチャット追加</a>
+      </div>
+    </div>
+
+    <hr>
+
+    {% for room in rooms %}
+    <div class="chat-room-box">
+      <a href="{{ room.name }}/{{ room.nickname }}" class="chat-room-link">
+        {% if yourprofile.avater %}
+          <img src="{{ yourprofile.avater.url }}" alt="Avatar">
+        {% else %}
+          <div class="default-icon">👤</div>
+        {% endif %}
+        <div>
+          <div class="chat-room-title">{{ yourprofile.nickname }}</div>
+        
+        </div>
+      </a>
+    </div>
+    {% empty %}
+    <p>チャットルームはまだありません。</p>
+    {% endfor %}
+  </div>
 </div>
+
 </body>
-
-
 </html>

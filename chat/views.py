@@ -144,14 +144,7 @@ def personal_chat_add_home(request,username,nickname):
 
 def profile(request,username,nickname):
     profile = MyProfile.objects.get(nickname= nickname)
-    nickname = profile.nickname
-    email = profile.email
-    user_id = profile.user_id
-    yourprofile = profile.profile
-    birthday = profile.birthday
-    id = profile.id
-
-    return render(request,'profile/profile.html',{'nickname':nickname,'username':username,'email':email ,'user_id':user_id,'yourprofile':yourprofile,'birthday':birthday,'id':id})
+    return render(request,'profile/profile.html',{'profile':profile,'username':username})
 
 def group_chat_add(request,username):
     myprofile = MyProfile.objects.get(name = username)
@@ -232,17 +225,20 @@ def home(request,username):
             rooms.append(room)
             roomsname.append(room.name)
             room_li = room.name.split("-")
+            yourprofiles = []
             if room.name == room.nickname:
                 if int(room_li[0]) == myprofile.id:
                     confirm_your_id = room_li[1]
                     yourprofile = MyProfile.objects.get(id = confirm_your_id)
+                    yourprofiles.append(yourprofile)
                 elif int(room_li[1]) == myprofile.id:
                     confirm_your_id = room_li[0]
                     yourprofile = MyProfile.objects.get(id = confirm_your_id)
+                    yourprofiles.append(yourprofile)
                 else:
                     pass
 
-    return render(request, 'home.html',{'username':username,'roomsname':roomsname,'rooms':rooms,'myprofile':myprofile,'yourprofile':yourprofile})
+    return render(request, 'home.html',{'username':username,'roomsname':roomsname,'rooms':rooms,'myprofile':myprofile,'yourprofiles':yourprofiles})
 
 def room(request, room, username, nickname):
     room_details = Room.objects.get(name=room)

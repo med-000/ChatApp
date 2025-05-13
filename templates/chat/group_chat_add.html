@@ -1,11 +1,32 @@
-<form method = "POST">
-    {% csrf_token %}
+<form method="POST">
+  {% csrf_token %}
+  <div class="container">
     {% for everyonefile in everyonefiles %}
-  <label>
-    <input type="checkbox" name="choices" value="{{everyonefile.email}}">
-    {{everyonefile.nickname}}
-    <p class="description">{{everyonefile.name}}</p>
-  </label>
-  {% endfor %}<br>
-  <button type="submit">Submit</button>
+      <div class="user-item d-flex align-items-center border rounded p-2 mb-2">
+        <!-- 左のアイコン -->
+        {% if everyonefile.avater %}
+          <img src="{{ everyonefile.avater.url }}" class="rounded-circle mr-3" style="width: 50px; height: 50px; object-fit: cover;">
+        {% else %}
+          <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center mr-3" style="width: 50px; height: 50px;">
+            <span>👤</span>
+          </div>
+        {% endif %}
+
+        <!-- 中央の情報 -->
+        <div class="flex-grow-1">
+          <label class="mb-0">
+            <input type="checkbox" name="choices" value="{{ everyonefile.email }}">
+            <strong>{{ everyonefile.nickname }}</strong><br>
+            <span class="text-muted">{{ everyonefile.name }}</span>
+          </label>
+        </div>
+      </div>
+    {% endfor %}
+    
+    <!-- 送信ボタン -->
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+  </div>
 </form>
+
+<!-- 必要なCSS（Bootstrap含む） -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">

@@ -1,13 +1,74 @@
-<html>
-<body>    
-<div>    
-    <form id="post-form" method="POST">
-        {% csrf_token %}
-        
-        <label>グループ名</label>
-        <input type="text" name="groupname" style="width: 200px;" required />
-        <input type="submit" value="Enter Room">
-    </form>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>グループ作成</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background: linear-gradient(to right, #dcefff, #a3c4dc);
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #34495e;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 15px;
+      margin-top: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      background-color: #2980b9;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      transition: background 0.3s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #3498db;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>グループチャット作成</h2>
+  <form id="post-form" method="POST">
+    {% csrf_token %}
+    <label for="groupname">グループ名</label>
+    <input type="text" name="groupname" id="groupname" required />
+    <input type="submit" value="🚪 Enter Room">
+  </form>
 </div>
+
 </body>
 </html>

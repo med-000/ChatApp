@@ -1,14 +1,100 @@
-<div>
-<h1>
-    {{name}}<br>
-    {{email}}<br>
-    {{user_id}}<br>
-    {{nickname}}<br>
-    {{yourprofile}}<br>
-    {{birthday}}<br>
-    {{id}}<br>
-</h1>
-<form id="post-form" method="POST" action="personal_chat_add_home">
-        {% csrf_token %}
-        <input type="submit" value="Enter Room">
-</form>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ username }} さんのプロフィール</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #fff;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    /* 中央プロフィール */
+    .cover {
+      background-color: #e6ecf0;
+      height: 200px;
+      position: relative;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      position: absolute;
+      bottom: -75px;
+      left: 20px;
+      object-fit: cover;
+    }
+
+    .profile-content {
+      padding: 95px 20px 20px 20px;
+    }
+
+    .edit-btn {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+    }
+
+    .stats span {
+      margin-right: 15px;
+      color: #555;
+    }
+
+    /* ボタンのスタイル */
+    .add-chat-btn {
+      display: block;
+      margin-top: 30px;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- プロフィール -->
+  <div class="cover">
+    {% if profile and profile.avater %}
+      <img src="{{ profile.avater.url }}" alt="プロフィール画像" class="avatar">
+    {% else %}
+      <div class="avatar" style="background-color:#ccc;"></div>
+    {% endif %}
+  </div>
+
+  <div class="profile-content">
+    {% if profile %}
+      <h2>{{ profile.nickname }}</h2>
+      <p class="text-muted">@{{ username }}</p>
+      <p>{{ profile.profile }}</p>
+      <p class="text-muted">誕生日:{{ profile.birthday|date:"Y年n月" }}</p>
+      <div class="stats">
+        <span><strong>{{ profile.room_ids|length }}</strong> 人の友達</span>
+      </div>
+    {% else %}
+      <p>プロフィールがまだ作成されていません。</p>
+      <a href="{% url 'myprofile_add' username %}" class="btn btn-success">プロフィールを作成</a>
+    {% endif %}
+  </div>
+
+  <!-- トークを追加ボタン -->
+  <div class="add-chat-btn">
+    <form action="personal_chat_add_home" method="POST">
+      {% csrf_token %}
+      <input type="submit" value="トークを追加" class="btn btn-primary btn-block">
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
