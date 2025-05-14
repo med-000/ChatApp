@@ -118,23 +118,23 @@
 
     <hr>
 
-    {% for room in rooms %}
-    <div class="chat-room-box">
-      <a href="{{ room.name }}/{{ room.nickname }}" class="chat-room-link">
-        {% if yourprofile.avater %}
-          <img src="{{ yourprofile.avater.url }}" alt="Avatar">
-        {% else %}
-          <div class="default-icon">👤</div>
-        {% endif %}
-        <div>
-          <div class="chat-room-title">{{ yourprofile.nickname }}</div>
-        
-        </div>
-      </a>
-    </div>
-    {% empty %}
-    <p>チャットルームはまだありません。</p>
-    {% endfor %}
+    {% for item in chat_data %}
+  <div class="chat-room-box">
+    <a href="{{ item.room.name }}/{{ item.room.nickname }}" class="chat-room-link">
+      {% if item.yourprofile.avater %}
+        <img src="{{ item.yourprofile.avater.url }}" alt="Avatar">
+      {% else %}
+        <div class="default-icon">👤</div>
+      {% endif %}
+      <div>
+        <div class="chat-room-title">{{ item.yourprofile.nickname }}</div>
+      </div>
+    </a>
+  </div>
+{% empty %}
+  <p>チャットルームはまだありません。</p>
+{% endfor %}
+
   </div>
 </div>
 

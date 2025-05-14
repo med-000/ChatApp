@@ -218,6 +218,7 @@ def home(request,username):
     room_ids = myprofile.room_ids
     rooms = []
     roomsname = []
+    chat_data = []
     yourprofile = None
     for room_id in room_ids or []:
         room = Room.objects.filter(id = room_id).first()
@@ -228,17 +229,22 @@ def home(request,username):
             yourprofiles = []
             if room.name == room.nickname:
                 if int(room_li[0]) == myprofile.id:
-                    confirm_your_id = room_li[1]
-                    yourprofile = MyProfile.objects.get(id = confirm_your_id)
-                    yourprofiles.append(yourprofile)
+                    your_id = int(room_li[1])
                 elif int(room_li[1]) == myprofile.id:
-                    confirm_your_id = room_li[0]
-                    yourprofile = MyProfile.objects.get(id = confirm_your_id)
-                    yourprofiles.append(yourprofile)
+                    your_id = int(room_li[0])
                 else:
-                    pass
+                    continue
 
-    return render(request, 'home.html',{'username':username,'roomsname':roomsname,'rooms':rooms,'myprofile':myprofile,'yourprofiles':yourprofiles})
+                try:
+                    yourprofile = MyProfile.objects.get(id=your_id)
+                    chat_data.append({
+                        'room': room,
+                        'yourprofile': yourprofile
+                    })
+                except MyProfile.DoesNotExist:
+                    continue
+
+    return render(request, 'home.html',{'username':username,'roomsname':roomsname,'rooms':rooms,'myprofile':myprofile,'yourprofile':yourprofile,'chat_data':chat_data})
 
 def room(request, room, username, nickname):
     room_details = Room.objects.get(name=room)
