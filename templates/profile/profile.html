@@ -75,7 +75,7 @@
   <div class="profile-content">
     {% if profile %}
       <h2>{{ profile.nickname }}</h2>
-      <p class="text-muted">@{{ username }}</p>
+      <p class="text-muted">@{{ profile.username }}</p>
       <p>{{ profile.profile }}</p>
       <p class="text-muted">誕生日:{{ profile.birthday|date:"Y年n月" }}</p>
       <div class="stats">
